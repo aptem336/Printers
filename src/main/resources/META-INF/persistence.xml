@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence">
+    <persistence-unit name="pu">
+        <jta-data-source>java:global/jdbc/db</jta-data-source>
+        <properties>
+            <property name="javax.persistence.schema-generation.database.action" value="none"/>
+        </properties>
+    </persistence-unit>
+</persistence>
