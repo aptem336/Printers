@@ -3,7 +3,7 @@ package model;
 import javax.persistence.*;
 
 @Entity
-public class Notes {
+public class Note {
     @Id
     @GeneratedValue
     private String id;

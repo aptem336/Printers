@@ -3,7 +3,7 @@
     <persistence-unit name="pu">
         <jta-data-source>java:global/jdbc/db</jta-data-source>
         <properties>
-            <property name="javax.persistence.schema-generation.database.action" value="none"/>
+            <property name="javax.persistence.schema-generation.database.action" value="create"/>
             <property name="javax.persistence.sql-load-script-source" value="META-INF/insert.sql"/>
         </properties>
     </persistence-unit>

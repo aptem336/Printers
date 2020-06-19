@@ -17,6 +17,9 @@ public class PrinterCardController implements Serializable {
     private Printer printer;
 
     public Printer getPrinter() {
+        if (printer == null) {
+            printer = new Printer();
+        }
         return printer;
     }
 

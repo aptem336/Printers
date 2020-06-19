@@ -9,69 +9,58 @@
 <h:outputStylesheet library="css" name="main.css"/>
 <h:head/>
 <h:body>
-    <h:form>
+    <h:form id="printers_form">
         <h:panelGroup layout="block" style="text-align: right">
             <h:commandButton value="Выйти" action="#{printerFilterController.logout()}"/>
         </h:panelGroup>
-        <h:panelGrid columns="5" cellpadding="0" cellspacing="0">
-            <h:inputText id="inventoryNumber"
-                         value="#{printerFilterController.printer.inventoryNumber}"
+        <h:panelGrid columns="4">
+            <h:inputText id="inventoryNumber" value="#{printerFilterController.printer.inventoryNumber}"
                          pt:placeholder="Инвентарный номер">
-                <f:ajax event="keyup" render="inventoryNumberTable modelTable locationTable replaceableTable"/>
+                <f:ajax event="keyup" render="printers_table"/>
             </h:inputText>
-            <h:inputText id="model"
-                         value="#{printerFilterController.printer.model}"
+            <h:inputText id="model" value="#{printerFilterController.printer.printerModel.model}"
                          pt:placeholder="Модель">
-                <f:ajax event="keyup" render="inventoryNumberTable modelTable locationTable replaceableTable"/>
+                <f:ajax event="keyup" render="printers_table"/>
             </h:inputText>
-            <h:inputText id="location"
-                         value="#{printerFilterController.printer.location}"
+            <h:inputText id="location" value="#{printerFilterController.printer.location}"
                          pt:placeholder="Расположение">
-                <f:ajax event="keyup" render="inventoryNumberTable modelTable locationTable replaceableTable"/>
+                <f:ajax event="keyup" render="printers_table"/>
             </h:inputText>
-            <cc:expendables expendables="#{printerFilterController.printer.expendables}"/>
-            <h:panelGroup/>
-            <h:dataTable id="inventoryNumberTable" var="printer"
+            <cc:expendables expendables="#{printerFilterController.printer.expendableResourceMileages}"/>
+        </h:panelGrid>
+        <h:panelGrid columns="2">
+            <h:dataTable id="printers_table" var="printer"
                          style="border: 1px solid black"
-                         Zvalue="#{printerFilterController.printers}">
+                         value="#{printerFilterController.filteredPrinters}">
                 <h:column>
                     <f:facet name="header">
                         <h:outputLabel value="Инвентарный номер" for="inventoryNumber"/>
                     </f:facet>
-                    <h:outputText value="#{printer.inventoryNumber}"/>
+                    <h:outputLink value="printer_card.xhtml">
+                        <h:outputText value="#{printer.inventoryNumber}"/>
+                        <f:param name="inventory_number" value="#{printer.inventoryNumber}"/>
+                    </h:outputLink>
                 </h:column>
-            </h:dataTable>
-            <h:dataTable id="modelTable" var="printer"
-                         style="border: 1px solid black"
-                         value="#{printerFilterController.printers}">
                 <h:column>
                     <f:facet name="header">
                         <h:outputLabel value="Модель" for="model"/>
                     </f:facet>
-                    <h:outputText value="#{printer.model}"/>
+                    <h:outputText value="#{printer.printerModel}" converter="#{printerModelConverter}"/>
                 </h:column>
-            </h:dataTable>
-            <h:dataTable id="locationTable" var="printer"
-                         style="border: 1px solid black"
-                         value="#{printerFilterController.printers}">
                 <h:column>
                     <f:facet name="header">
                         <h:outputLabel value="Расположение" for="location"/>
                     </f:facet>
                     <h:outputText value="#{printer.location}"/>
                 </h:column>
-            </h:dataTable>
-            <h:dataTable id="replaceableTable" var="printer"
-                         style="border: 1px solid black"
-                         value="#{printerFilterController.printers}">
                 <h:column>
                     <f:facet name="header">
                         <h:outputLabel value="К замене"/>
                     </f:facet>
-                    <cc:expendables expendables="#{printer.replaceableExpendables}" disabled="#{true}"/>
+                    <cc:expendables expendables="#{printer.replaceableExpendableResourceMileage}" disabled="#{true}"/>
                 </h:column>
             </h:dataTable>
-            <h:button value="+"/>
+            <h:button value="+" outcome="printer_card?faces-redirect=true"/>
         </h:panelGrid>
         <h:button value="Печать" onclick="window.print()"/>
     </h:form>
