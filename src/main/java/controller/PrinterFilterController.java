@@ -1,22 +1,16 @@
 package controller;
 
-import model.Expendable;
-import model.ExpendableEnumeration;
+import model.ExpendableResource;
+import model.ExpendableResourceMileage;
 import model.Printer;
-import model.PrinterExpendable;
+import model.PrinterModel;
 
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.io.Serializable;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,55 +18,52 @@ import java.util.stream.Stream;
 @ViewScoped
 public class PrinterFilterController implements Serializable {
     @Inject
-    private EntityManager em;
+    private QueryController queryController;
     private Printer printer;
-    private Set<Printer> printers;
+    private List<Printer> printers;
 
     @PostConstruct
     private void postConstruct() {
         printer = new Printer();
-        Stream.of(ExpendableEnumeration.values()).forEach(e ->
-                printer.getExpendables().add(new PrinterExpendable(printer, em.find(Expendable.class, e))));
 
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Printer> cq = cb.createQuery(Printer.class);
-        Root<Printer> rootEntry = cq.from(Printer.class);
-        CriteriaQuery<Printer> all = cq.select(rootEntry);
-        TypedQuery<Printer> allQuery = em.createQuery(all);
-        printers = new LinkedHashSet<>(allQuery.getResultList());
+        PrinterModel printerModel = new PrinterModel();
+        printerModel.setModel("");
+        printer.setPrinterModel(printerModel);
+
+        printer.setExpendableResourceMileages(queryController.getAllExpendables().stream().map(e -> {
+            ExpendableResource expendableResource = new ExpendableResource();
+            expendableResource.setExpendable(e);
+            ExpendableResourceMileage expendableResourceMileage = new ExpendableResourceMileage(expendableResource, null);
+            expendableResourceMileage.setReplaceable(false);
+            return expendableResourceMileage;
+        }).collect(Collectors.toList()));
+
+        printers = queryController.getAllPrinters();
     }
 
     public Printer getPrinter() {
         return printer;
     }
 
-    public Set<Printer> getPrinters() {
+    public List<Printer> getFilteredPrinters() {
         Stream<Printer> printerStream = printers.stream();
         if (printer.getInventoryNumber() != null) {
             printerStream = printerStream.filter(p -> p.getInventoryNumber().contains(printer.getInventoryNumber()));
         }
-        if (printer.getModel() != null) {
-            printerStream = printerStream.filter(p -> p.getModel().contains(printer.getModel()));
-        }
+        printerStream = printerStream.filter(p -> p.getPrinterModel().getModel().contains(printer.getPrinterModel().getModel()));
         if (printer.getLocation() != null) {
             printerStream = printerStream.filter(p -> p.getLocation().contains(printer.getLocation()));
         }
         printerStream = printerStream.filter(p ->
-                p.getReplaceableExpendables().stream().map(e ->
-                        e.getExpendable().getEnumeration().getName()
-                ).collect(Collectors.toSet()).containsAll(
-                        printer.getReplaceableExpendables().stream().map(e ->
-                                e.getExpendable().getEnumeration().getName()
-                        ).collect(Collectors.toSet()))
+                p.getReplaceableExpendableResourceMileage().stream()
+                        .map(erm -> erm.getExpendableResource().getExpendable()).collect(Collectors.toList()).containsAll(
+                        printer.getReplaceableExpendableResourceMileage().stream()
+                                .map(erm -> erm.getExpendableResource().getExpendable()).collect(Collectors.toList()))
         );
-        return printerStream.collect(Collectors.toCollection(LinkedHashSet::new));
+        return printerStream.collect(Collectors.toList());
     }
 
     public String logout() {
         return "printer_filter?faces-redirect=true";
-    }
-
-    public String addPrinter() {
-        return null;
     }
 }
