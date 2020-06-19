@@ -1,10 +1,14 @@
 package model;
 
+import controller.QueryController;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import java.util.Objects;
 
 @Entity
+@NamedQuery(name = QueryController.getAllExpendables, query = "SELECT e FROM Expendable e")
 public class Expendable {
     @Id
     private String name;
