@@ -5,9 +5,9 @@ import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 @Embeddable
-public class PrinterExpendablePK implements Serializable {
+public class ExpendableResourcePK implements Serializable {
     @Column
-    private ExpendableEnumeration expendableName;
+    private String printerModelId;
     @Column
-    private String printerId;
+    private String expendableName;
 }

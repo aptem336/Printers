@@ -1,8 +1,6 @@
 body {
     font-family: Calibri, serif;
-    font-size: 18px;
     text-align: center;
-    vertical-align: top;
 }
 
 table {
@@ -10,15 +8,25 @@ table {
     width: fit-content;
     overflow: auto;
     margin: auto;
-    table-layout: fixed;
 }
 
 td {
-    vertical-align: baseline;
+    vertical-align: top;
 }
 
 input[type=button], input[type=submit] {
     font-weight: bold;
     cursor: pointer;
-    margin: 5px;
+}
+
+.LEFT {
+    text-align: left;
+}
+
+.CENTER {
+    text-align: center;
+}
+
+.RIGHT {
+    text-align: right;
 }

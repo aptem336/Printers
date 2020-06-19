@@ -1,27 +1,35 @@
 package model;
 
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import java.util.Objects;
 
 @Entity
 public class Expendable {
     @Id
-    @Enumerated
-    private ExpendableEnumeration enumeration;
+    private String name;
 
     public Expendable() {
     }
 
-    public Expendable(ExpendableEnumeration enumeration) {
-        this.enumeration = enumeration;
+    public String getName() {
+        return name;
     }
 
-    public ExpendableEnumeration getEnumeration() {
-        return enumeration;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setEnumeration(ExpendableEnumeration name) {
-        this.enumeration = name;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Expendable that = (Expendable) o;
+        return Objects.equals(getName(), that.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName());
     }
 }
