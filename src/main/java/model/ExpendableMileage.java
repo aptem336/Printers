@@ -5,9 +5,9 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class PrinterExpendable {
+public class ExpendableMileage {
     @EmbeddedId
-    private PrinterExpendablePK printerExpendablePK;
+    private ExpendableMileagePK expendableMileagePK;
     @ManyToOne
     @MapsId("printerId")
     private Printer printer;
@@ -19,23 +19,16 @@ public class PrinterExpendable {
     @Column(nullable = false)
     @Min(0)
     private Integer mileage = 0;
-    @Transient
-    private Boolean replaceable;
 
-    public PrinterExpendable() {
+    public ExpendableMileage() {
     }
 
-    public PrinterExpendable(Printer printer, Expendable expendable) {
-        this.printer = printer;
-        this.expendable = expendable;
+    public ExpendableMileagePK getExpendableMileagePK() {
+        return expendableMileagePK;
     }
 
-    public PrinterExpendablePK getPrinterExpendablePK() {
-        return printerExpendablePK;
-    }
-
-    public void setPrinterExpendablePK(PrinterExpendablePK printerExpendablePK) {
-        this.printerExpendablePK = printerExpendablePK;
+    public void setExpendableMileagePK(ExpendableMileagePK expendableMileagePK) {
+        this.expendableMileagePK = expendableMileagePK;
     }
 
     public Printer getPrinter() {
@@ -68,16 +61,5 @@ public class PrinterExpendable {
 
     public void setMileage(Integer mileage) {
         this.mileage = mileage;
-    }
-
-    public Boolean getReplaceable() {
-        if (this.replaceable == null) {
-            this.replaceable = getExpendable().getEnumeration().getResource() <= getPrinter().getCounter() - getMileage();
-        }
-        return this.replaceable;
-    }
-
-    public void setReplaceable(Boolean replaceable) {
-        this.replaceable = replaceable;
     }
 }
