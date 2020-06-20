@@ -20,13 +20,13 @@ public class Printer {
     @NotNull
     @Column(nullable = false)
     @Min(0)
-    private Integer counter = 0;
+    private Integer counter;
     @OneToMany(mappedBy = "printer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExpendableMileage> expendableMileages = new ArrayList<>();
     @OneToMany(mappedBy = "printer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Note> notes = new ArrayList<>();
     @Transient
-    private List<ExpendableResourceMileage> expendableResourceMileages;
+    private List<ReplaceableExpendable> replaceableExpendable;
 
     public String getInventoryNumber() {
         return inventoryNumber;
@@ -76,42 +76,7 @@ public class Printer {
         this.notes = notes;
     }
 
-    public List<ExpendableResourceMileage> getExpendableResourceMileages() {
-        if (expendableResourceMileages == null && printerModel != null) {
-            expendableResourceMileages = printerModel.getExpendableResources().stream().map(expendableResource ->
-                    new ExpendableResourceMileage(expendableResource, getExpendableMileage(expendableResource)))
-                    .collect(Collectors.toList());
-        }
-        return expendableResourceMileages;
-    }
-
-    public void setExpendableResourceMileages(List<ExpendableResourceMileage> expendableResourceMileages) {
-        this.expendableResourceMileages = expendableResourceMileages;
-    }
-
-    public ExpendableMileage getExpendableMileage(ExpendableResource expendableResource) {
-        return expendableMileages.stream().filter(expendableMileage ->
-                expendableMileage.getExpendable().equals(expendableResource.getExpendable()))
-                .findFirst().orElse(null);
-    }
-
-    public List<ExpendableResourceMileage> getReplaceableExpendableResourceMileage() {
-        return getExpendableResourceMileages().stream()
-                .filter(ExpendableResourceMileage::getReplaceable).collect(Collectors.toList());
-    }
-
-    public void replaceExpendable(ExpendableResource expendableResource) {
-        ExpendableMileage expendableMileage = getExpendableMileage(expendableResource);
-        if (expendableMileage == null) {
-            expendableMileage = new ExpendableMileage();
-            expendableMileage.setExpendable(expendableResource.getExpendable());
-            expendableMileage.setNumber("");
-            expendableMileage.setPrinter(this);
-            this.getExpendableMileages().add(expendableMileage);
-        }
-        expendableMileage.setMileage(0);
-    }
-
+    //TODO simplify below
     public void addNote() {
         Note note = new Note();
         note.setPrinter(this);
@@ -121,5 +86,37 @@ public class Printer {
     public void removeNote(Note note) {
         note.setPrinter(null);
         notes.remove(note);
+    }
+
+    public List<ReplaceableExpendable> getReplaceableExpendables() {
+        if (replaceableExpendable == null) {
+            if (printerModel != null) {
+                replaceableExpendable = printerModel.getExpendableResources().stream()
+                        .filter(er -> getExpendableMileage(er) == null || er.getResource() < getExpendableMileage(er).getMileage())
+                        .map(er -> new ReplaceableExpendable(er.getExpendable().getName(), true)).collect(Collectors.toList());
+            }
+        }
+        return replaceableExpendable;
+    }
+
+    public void setReplaceableExpendable(List<ReplaceableExpendable> replaceableExpendable) {
+        this.replaceableExpendable = replaceableExpendable;
+    }
+
+    public ExpendableMileage getExpendableMileage(ExpendableResource expendableResource) {
+        return expendableMileages.stream().filter(expendableMileage ->
+                expendableMileage.getExpendable().equals(expendableResource.getExpendable()))
+                .findFirst().orElse(null);
+    }
+
+    public void replaceExpendable(ExpendableResource expendableResource) {
+        ExpendableMileage expendableMileage = getExpendableMileage(expendableResource);
+        if (expendableMileage == null) {
+            expendableMileage = new ExpendableMileage();
+            expendableMileage.setExpendable(expendableResource.getExpendable());
+            expendableMileage.setPrinter(this);
+            expendableMileages.add(expendableMileage);
+        }
+        expendableMileage.setMileage(0);
     }
 }

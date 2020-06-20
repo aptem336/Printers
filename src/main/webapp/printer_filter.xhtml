@@ -26,7 +26,7 @@
                          pt:placeholder="Расположение">
                 <f:ajax event="keyup" render="printers_table"/>
             </h:inputText>
-            <cc:expendables expendables="#{printerFilterController.printer.expendableResourceMileages}"/>
+            <cc:expendables expendables="#{printerFilterController.printer.replaceableExpendables}"/>
         </h:panelGrid>
         <h:panelGrid columns="2">
             <h:dataTable id="printers_table" var="printer"
@@ -57,11 +57,12 @@
                     <f:facet name="header">
                         <h:outputLabel value="К замене"/>
                     </f:facet>
-                    <cc:expendables expendables="#{printer.replaceableExpendableResourceMileage}" disabled="#{true}"/>
+                    <cc:expendables expendables="#{printer.replaceableExpendables}" disabled="#{true}"/>
                 </h:column>
             </h:dataTable>
             <h:button value="+" outcome="printer_card?faces-redirect=true"/>
         </h:panelGrid>
+        <!--FIXME print only expendables_table-->
         <h:button value="Печать" onclick="window.print()"/>
     </h:form>
 </h:body>

@@ -15,16 +15,12 @@
                          converter="#{printerConverter}"/>
         </f:metadata>
         <h:panelGrid columns="3" columnClasses="LEFT, CENTER, RIGHT">
-            <h:outputText/>
+            <h:button value="Назад" outcome="printer_filter?faces-redirect=true"/>
             <h:inputText id="inventory_number_input"
                          value="#{printerCardController.printer.inventoryNumber}"
                          pt:placeholder="Инвентарный номер"
                          pt:required="true"/>
-            <h:panelGroup>
-                <h:button value="Назад" outcome="printer_filter?faces-redirect=true"/>
-                <h:commandButton value="Cохранить" action="#{printerCardController.save()}"/>
-            </h:panelGroup>
-
+            <h:commandButton value="Cохранить" action="#{printerCardController.save()}"/>
             <h:panelGrid layout="block"
                          columns="2"
                          style="border: 1px solid black; text-align: right">
@@ -91,10 +87,11 @@
                 <h:button value="+"/>
             </h:panelGroup>
         </h:panelGrid>
+        <!--IMPL-->
         <h:commandButton value="Всё"/>
         <h:commandButton value="История"/>
         <h:commandButton value="Примечания"/>
-        <h:panelGrid columns="2">
+        <h:panelGrid id="notes_table_wrapper" columns="2">
             <h:dataTable id="notes_table"
                          cellpadding="5"
                          var="note"
@@ -106,7 +103,7 @@
                 </h:column>
                 <h:column>
                     <h:commandButton value="x" action="#{printerCardController.printer.removeNote(note)}">
-                        <f:ajax render="notes_table"/>
+                        <f:ajax render="printer_card_form:notes_table_wrapper"/>
                     </h:commandButton>
                 </h:column>
             </h:dataTable>

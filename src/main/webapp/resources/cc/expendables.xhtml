@@ -16,7 +16,7 @@
             <h:selectBooleanCheckbox value="#{expendable.replaceable}" disabled="#{cc.attrs.disabled}">
                 <f:ajax render="printers_form:printers_table"/>
             </h:selectBooleanCheckbox>
-            <h:outputLabel value="#{expendable.expendableResource.expendable.name}"/>
+            <h:outputLabel value="#{expendable.expendableName}"/>
         </ui:repeat>
     </h:panelGroup>
 </composite:implementation>

@@ -11,7 +11,7 @@ import java.util.Objects;
 @NamedQuery(name = QueryController.getAllPrinterModels, query = "SELECT pm FROM PrinterModel pm")
 public class PrinterModel {
     @Id
-    private String model;
+    private String model = "";
     @OneToMany(mappedBy = "printerModel", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExpendableResource> expendableResources = new ArrayList<>();
 

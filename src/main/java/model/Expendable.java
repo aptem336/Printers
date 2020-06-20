@@ -11,7 +11,7 @@ import java.util.Objects;
 @NamedQuery(name = QueryController.getAllExpendables, query = "SELECT e FROM Expendable e")
 public class Expendable {
     @Id
-    private String name;
+    private String name = "";
 
     public Expendable() {
     }

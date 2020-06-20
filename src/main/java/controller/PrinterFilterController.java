@@ -1,7 +1,6 @@
 package controller;
 
-import model.ExpendableResource;
-import model.ExpendableResourceMileage;
+import model.ReplaceableExpendable;
 import model.Printer;
 import model.PrinterModel;
 
@@ -19,25 +18,15 @@ import java.util.stream.Stream;
 public class PrinterFilterController implements Serializable {
     @Inject
     private QueryController queryController;
-    private Printer printer;
     private List<Printer> printers;
+    private Printer printer;
 
     @PostConstruct
     private void postConstruct() {
         printer = new Printer();
-
-        PrinterModel printerModel = new PrinterModel();
-        printerModel.setModel("");
-        printer.setPrinterModel(printerModel);
-
-        printer.setExpendableResourceMileages(queryController.getAllExpendables().stream().map(e -> {
-            ExpendableResource expendableResource = new ExpendableResource();
-            expendableResource.setExpendable(e);
-            ExpendableResourceMileage expendableResourceMileage = new ExpendableResourceMileage(expendableResource, null);
-            expendableResourceMileage.setReplaceable(false);
-            return expendableResourceMileage;
-        }).collect(Collectors.toList()));
-
+        printer.setPrinterModel(new PrinterModel());
+        printer.setReplaceableExpendable(queryController.getAllExpendables().stream().map(e ->
+                new ReplaceableExpendable(e.getName(), false)).collect(Collectors.toList()));
         printers = queryController.getAllPrinters();
     }
 
@@ -54,11 +43,8 @@ public class PrinterFilterController implements Serializable {
         if (printer.getLocation() != null) {
             printerStream = printerStream.filter(p -> p.getLocation().contains(printer.getLocation()));
         }
-        printerStream = printerStream.filter(p ->
-                p.getReplaceableExpendableResourceMileage().stream()
-                        .map(erm -> erm.getExpendableResource().getExpendable()).collect(Collectors.toList()).containsAll(
-                        printer.getReplaceableExpendableResourceMileage().stream()
-                                .map(erm -> erm.getExpendableResource().getExpendable()).collect(Collectors.toList()))
+        printerStream = printerStream.filter(p -> p.getReplaceableExpendables().containsAll(
+                printer.getReplaceableExpendables())
         );
         return printerStream.collect(Collectors.toList());
     }
