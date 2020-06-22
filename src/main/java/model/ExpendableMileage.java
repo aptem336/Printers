@@ -8,20 +8,17 @@ import javax.validation.constraints.NotNull;
 public class ExpendableMileage {
     @EmbeddedId
     private ExpendableMileagePK expendableMileagePK;
-    @ManyToOne
+    @ManyToOne(optional = false)
     @MapsId("printerId")
     private Printer printer;
-    @ManyToOne
+    @ManyToOne(optional = false)
     @MapsId("expendableName")
     private Expendable expendable;
     private String number;
     @NotNull
     @Column(nullable = false)
     @Min(0)
-    private Integer mileage = 0;
-
-    public ExpendableMileage() {
-    }
+    private Integer mileage;
 
     public ExpendableMileagePK getExpendableMileagePK() {
         return expendableMileagePK;

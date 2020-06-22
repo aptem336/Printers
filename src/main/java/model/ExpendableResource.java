@@ -8,10 +8,10 @@ import javax.validation.constraints.NotNull;
 public class ExpendableResource {
     @EmbeddedId
     private ExpendableResourcePK expendableResourcePK;
-    @ManyToOne
+    @ManyToOne(optional = false)
     @MapsId("printerModelId")
     private PrinterModel printerModel;
-    @ManyToOne
+    @ManyToOne(optional = false)
     @MapsId("expendableName")
     private Expendable expendable;
     @NotNull

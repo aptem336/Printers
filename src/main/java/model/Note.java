@@ -1,16 +1,27 @@
 package model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.sql.Date;
 
 @Entity
 public class Note {
     @Id
     @GeneratedValue
     private String id;
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Printer printer;
+    @NotNull
+    @Column(nullable = false)
     private String noteUser;
+    @NotNull
+    @Column(nullable = false)
+    private Date date;
+    @NotNull
+    @Column(nullable = false)
     private String content;
+    @NotNull
+    @Column(nullable = false)
     @Enumerated
     private NoteType noteType;
 
@@ -46,6 +57,14 @@ public class Note {
         this.content = content;
     }
 
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
     public NoteType getNoteType() {
         return noteType;
     }
@@ -54,7 +73,7 @@ public class Note {
         this.noteType = noteType;
     }
 
-    private enum NoteType {
-        //IMPL
+    public enum NoteType {
+        COMMENT, HISTORY
     }
 }

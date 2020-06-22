@@ -10,13 +10,17 @@
     <composite:attribute name="disabled" type="java.lang.Boolean"/>
 </composite:interface>
 <composite:implementation>
-    <h:panelGroup id="expendables_checkbox">
+    <h:panelGroup id="expendables_checkbox"
+                  layout="block"
+                  style="text-align: left; max-width: 600px">
         <ui:repeat var="expendable"
                    value="#{cc.attrs.expendables}">
-            <h:selectBooleanCheckbox value="#{expendable.replaceable}" disabled="#{cc.attrs.disabled}">
-                <f:ajax render="printers_form:printers_table"/>
-            </h:selectBooleanCheckbox>
-            <h:outputLabel value="#{expendable.expendableName}"/>
+            <h:panelGroup style="white-space: nowrap">
+                <h:selectBooleanCheckbox id="checkbox" value="#{expendable.replaceable}" disabled="#{cc.attrs.disabled}">
+                    <f:ajax render="printers_form:printers_table"/>
+                </h:selectBooleanCheckbox>
+                <h:outputLabel for="checkbox" value="#{expendable.expendableName}"/>
+            </h:panelGroup>
         </ui:repeat>
     </h:panelGroup>
 </composite:implementation>

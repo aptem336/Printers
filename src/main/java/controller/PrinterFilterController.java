@@ -1,13 +1,16 @@
 package controller;
 
-import model.ReplaceableExpendable;
 import model.Printer;
 import model.PrinterModel;
+import model.ReplaceableExpendable;
 
 import javax.annotation.PostConstruct;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.security.enterprise.SecurityContext;
+import javax.servlet.http.HttpSession;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,9 +20,12 @@ import java.util.stream.Stream;
 @ViewScoped
 public class PrinterFilterController implements Serializable {
     @Inject
+    private SecurityContext securityContext;
+    @Inject
     private QueryController queryController;
     private List<Printer> printers;
     private Printer printer;
+    private Mode mode;
 
     @PostConstruct
     private void postConstruct() {
@@ -28,6 +34,11 @@ public class PrinterFilterController implements Serializable {
         printer.setReplaceableExpendable(queryController.getAllExpendables().stream().map(e ->
                 new ReplaceableExpendable(e.getName(), false)).collect(Collectors.toList()));
         printers = queryController.getAllPrinters();
+        if (securityContext.isCallerInRole("ENGINEER")) {
+            mode = Mode.CREATE;
+        } else {
+            mode = Mode.VIEW;
+        }
     }
 
     public Printer getPrinter() {
@@ -44,12 +55,33 @@ public class PrinterFilterController implements Serializable {
             printerStream = printerStream.filter(p -> p.getLocation().contains(printer.getLocation()));
         }
         printerStream = printerStream.filter(p -> p.getReplaceableExpendables().containsAll(
-                printer.getReplaceableExpendables())
+                printer.getReplaceableExpendables().stream().filter(ReplaceableExpendable::getReplaceable).collect(Collectors.toList()))
         );
         return printerStream.collect(Collectors.toList());
     }
 
     public String logout() {
-        return "printer_filter?faces-redirect=true";
+        ((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false)).invalidate();
+        return "login?faces-redirect=true";
+    }
+
+    public Mode getMode() {
+        return mode;
+    }
+
+    public Boolean getCreate() {
+        return mode == Mode.CREATE;
+    }
+
+    public Boolean getEdit() {
+        return mode == Mode.EDIT;
+    }
+
+    public Boolean getView() {
+        return mode == Mode.VIEW;
+    }
+
+    public enum Mode {
+        CREATE, EDIT, VIEW
     }
 }

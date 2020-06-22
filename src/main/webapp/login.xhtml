@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Аутенфикация</title>
+    <link rel="stylesheet" type="text/css" href="./resources/css/main.css"/>
+</head>
+<body>
+<table>
+    <tr>
+        <td>
+            <form action="j_security_check" method="post">
+                <table>
+                    <tr>
+                        <td>
+                            <label for="username">Логин:</label>
+                        </td>
+                        <td>
+                            <input id="username" name="j_username"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="password">Пароль:</label>
+                        </td>
+                        <td>
+                            <input id="password" name="j_password" type="password"/>
+                        </td>
+                    </tr>
+                </table>
+                <input type="hidden" name="faces-redirect" value="true"/>
+                <input type="submit" value="Войти"/>
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

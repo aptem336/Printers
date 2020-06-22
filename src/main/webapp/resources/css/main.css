@@ -14,7 +14,7 @@ td {
     vertical-align: top;
 }
 
-input[type=button], input[type=submit], select {
+input[type=button], input[type=submit], select, label {
     font-weight: bold;
     cursor: pointer;
 }

@@ -7,7 +7,9 @@
       xmlns:cc="http://xmlns.jcp.org/jsf/composite/cc"
       xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 <h:outputStylesheet library="css" name="main.css"/>
-<h:head/>
+<h:head>
+    <title>Принтеры</title>
+</h:head>
 <h:body>
     <h:form id="printers_form">
         <h:panelGroup layout="block" style="text-align: right">
@@ -60,7 +62,7 @@
                     <cc:expendables expendables="#{printer.replaceableExpendables}" disabled="#{true}"/>
                 </h:column>
             </h:dataTable>
-            <h:button value="+" outcome="printer_card?faces-redirect=true"/>
+            <h:button rendered="#{printerFilterController.create}" value="+" outcome="printer_card?faces-redirect=true"/>
         </h:panelGrid>
         <!--FIXME print only expendables_table-->
         <h:button value="Печать" onclick="window.print()"/>

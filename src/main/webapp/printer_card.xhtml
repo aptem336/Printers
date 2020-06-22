@@ -6,7 +6,9 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 <h:outputStylesheet library="css" name="main.css"/>
-<h:head/>
+<h:head>
+    <title>Карточка принтера</title>
+</h:head>
 <h:body>
     <h:form id="printer_card_form">
         <f:metadata>
@@ -14,18 +16,27 @@
                          value="#{printerCardController.printer}"
                          converter="#{printerConverter}"/>
         </f:metadata>
-        <h:panelGrid columns="3" columnClasses="LEFT, CENTER, RIGHT">
+        <h:messages errorStyle="color: red"/>
+        <h:panelGrid columns="3" columnClasses="LEFT,CENTER,RIGHT">
             <h:button value="Назад" outcome="printer_filter?faces-redirect=true"/>
-            <h:inputText id="inventory_number_input"
-                         value="#{printerCardController.printer.inventoryNumber}"
-                         pt:placeholder="Инвентарный номер"
-                         pt:required="true"/>
-            <h:commandButton value="Cохранить" action="#{printerCardController.save()}"/>
+            <h:panelGroup>
+                <h:outputLabel for="inventiry_number_input" value="Инв. номер: "/>
+                <h:inputText disabled="#{not printerCardController.create}"
+                             id="inventiry_number_input"
+                             value="#{printerCardController.printer.inventoryNumber}"
+                             pt:placeholder="Инвентарный номер" pt:required="true"/>
+            </h:panelGroup>
+            <h:panelGroup>
+                <h:commandButton rendered="#{not printerCardController.view}" value="Cохранить"
+                                 action="#{printerCardController.save()}"/>
+            </h:panelGroup>
             <h:panelGrid layout="block"
                          columns="2"
                          style="border: 1px solid black; text-align: right">
-                <h:outputLabel value="Модель"/>
-                <h:selectOneMenu value="#{printerCardController.printer.printerModel}"
+                <h:outputLabel for="printer_model_select" value="Модель"/>
+                <h:selectOneMenu disabled="#{not printerCardController.create}"
+                                 id="printer_model_select"
+                                 value="#{printerCardController.printer.printerModel}"
                                  converter="#{printerModelConverter}"
                                  pt:required="true"
                                  hideNoSelectionOption="true">
@@ -36,82 +47,107 @@
                                    itemValue="#{printer_model}"/>
                     <f:ajax render="@this expendables_table"/>
                 </h:selectOneMenu>
-                <h:outputLabel value="Расположение"/>
-                <h:inputText value="#{printerCardController.printer.location}"
+                <h:outputLabel for="location_input" value="Расположение"/>
+                <h:inputText disabled="#{not printerCardController.create}"
+                             id="location_input"
+                             value="#{printerCardController.printer.location}"
                              pt:placeholder="Расположение"/>
             </h:panelGrid>
-            <h:panelGroup id="expendables_table_wrapper">
-                <h:dataTable id="expendables_table"
-                             var="expendable_resource"
-                             value="#{printerCardController.printer.printerModel.expendableResources}"
-                             border="1"
-                             style="margin: 0 5px 5px 5px">
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="Название"/>
-                        </f:facet>
-                        <h:outputText value="#{expendable_resource.expendable.name}"
-                                      pt:placeholder="Название"/>
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="Номер"/>
-                        </f:facet>
-                        <h:inputText
-                                disabled="#{printerCardController.printer.getExpendableMileage(expendable_resource) == null}"
-                                value="#{printerCardController.printer.getExpendableMileage(expendable_resource).number}"
-                                pt:placeholder="Номер детали"/>
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="Ресурс"/>
-                        </f:facet>
-                        <h:inputText
-                                style="text-align: right"
-                                disabled="#{printerCardController.printer.getExpendableMileage(expendable_resource) == null}"
-                                value="#{printerCardController.printer.getExpendableMileage(expendable_resource).mileage}"/>
-                        <h:outputText value="/#{expendable_resource.resource}"/>
-                    </h:column>
-                    <h:column>
-                        <h:commandButton value="*"
-                                         action="#{printerCardController.printer.replaceExpendable(expendable_resource)}">
-                            <f:ajax execute="printer_card_form:expendables_table_wrapper"
-                                    render="printer_card_form:expendables_table_wrapper"/>
-                        </h:commandButton>
-                    </h:column>
-                </h:dataTable>
-            </h:panelGroup>
-            <h:panelGroup layout="block">
-                <h:inputText value="#{printerCardController.printer.counter}"
-                             pt:placeholder="Счётчик"/>
-                <h:button value="+"/>
-            </h:panelGroup>
-        </h:panelGrid>
-        <!--IMPL-->
-        <h:commandButton value="Всё"/>
-        <h:commandButton value="История"/>
-        <h:commandButton value="Примечания"/>
-        <h:panelGrid id="notes_table_wrapper" columns="2">
-            <h:dataTable id="notes_table"
-                         cellpadding="5"
-                         var="note"
-                         value="#{printerCardController.printer.notes}"
-                         style="border: 1px solid black">
+            <h:dataTable id="expendables_table"
+                         var="expendable_resource"
+                         columnClasses="LEFT,LEFT,RIGHT,CENTER"
+                         value="#{printerCardController.printer.printerModel.expendableResources}"
+                         border="1">
                 <h:column>
-                    <h:inputTextarea value="#{note.content}"
-                                     style="resize: none; width: 600px; height: 100px"/>
+                    <f:facet name="header">
+                        <h:outputText value="Название"/>
+                    </f:facet>
+                    <h:outputText value="#{expendable_resource.expendable.name}"
+                                  pt:placeholder="Название"/>
                 </h:column>
                 <h:column>
-                    <h:commandButton value="x" action="#{printerCardController.printer.removeNote(note)}">
-                        <f:ajax render="printer_card_form:notes_table_wrapper"/>
+                    <f:facet name="header">
+                        <h:outputText value="Номер детали"/>
+                    </f:facet>
+                    <h:outputText
+                            value="#{printerCardController.printer.getExpendableMileage(expendable_resource).number}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        <h:outputText value="Пробег"/>
+                    </f:facet>
+                    <h:panelGroup id="resource">
+                        <h:outputText
+                                style="#{printerCardController.printer.counter - printerCardController.printer.getExpendableMileage(expendable_resource).mileage - expendable_resource.resource > 0 ? 'color: #e34545' : ''}"
+                                rendered="#{printerCardController.printer.getExpendableMileage(expendable_resource).mileage != null}"
+                                value="#{printerCardController.printer.counter - printerCardController.printer.getExpendableMileage(expendable_resource).mileage}/#{expendable_resource.resource}"/>
+                    </h:panelGroup>
+                </h:column>
+                <h:column rendered="#{not printerCardController.view}">
+                    <h:commandButton value="*"
+                                     style="#{printerCardController.printer.counter - printerCardController.printer.getExpendableMileage(expendable_resource).mileage - expendable_resource.resource > 0 ? 'background: #e34545; color: white' : ''}"
+                                     action="#{printerCardController.replaceExpendable(expendable_resource)}">
+                        <f:ajax execute="notes_table" render="number resource @this printer_card_form:notes_table"/>
                     </h:commandButton>
                 </h:column>
             </h:dataTable>
-            <h:commandButton value="+" action="#{printerCardController.printer.addNote()}">
-                <f:ajax render="notes_table"/>
-            </h:commandButton>
+            <h:panelGroup layout="block">
+                <h:inputText id="counter"
+                             disabled="#{printerCardController.view}"
+                             value="#{printerCardController.printer.counter}"
+                             pt:placeholder="Счётчик" pt:required="true" pt:type="number"
+                             pt:min="#{printerCardController.printer.counter}">
+                    <f:ajax event="keyup" execute="expendables_table" render="expendables_table"/>
+                    <f:ajax event="change" execute="expendables_table" render="expendables_table"/>
+                </h:inputText>
+            </h:panelGroup>
+            <h:panelGroup/>
+            <h:panelGroup>
+                <h:commandButton value="Всё" action="#{printerCardController.all}">
+                    <f:ajax execute="notes_table" render="notes_table"/>
+                </h:commandButton>
+                <h:commandButton value="История" action="#{printerCardController.history}">
+                    <f:ajax execute="notes_table" render="notes_table"/>
+                </h:commandButton>
+                <h:commandButton value="Примечания" action="#{printerCardController.comment}">
+                    <f:ajax execute="notes_table" render="notes_table"/>
+                </h:commandButton>
+                <h:panelGrid id="notes_table_wrapper" columns="2">
+                    <h:dataTable id="notes_table"
+                                 var="note"
+                                 value="#{printerCardController.notes}"
+                                 style="width: 630px; max-height: 300px; border: 1px solid black">
+                        <h:column>
+                            <h:panelGroup layout="block"
+                                          style="text-align: right">
+                                <h:outputText value="#{note.noteUser} #{note.date} "
+                                              style="font-style: italic"/>
+                                <h:commandButton
+                                        rendered="#{printerCardController.user.equals(note.noteUser) and note.noteType.name().equals('COMMENT')}"
+                                        value="x" action="#{printerCardController.removeNote(note)}">
+                                    <f:ajax execute="printer_card_form:notes_table_wrapper"
+                                            render="printer_card_form:notes_table_wrapper"/>
+                                </h:commandButton>
+                            </h:panelGroup>
+                            <h:inputTextarea
+                                    disabled="#{not printerCardController.user.equals(note.noteUser) or note.noteType.name().equals('HISTORY')}"
+                                    value="#{note.content}"
+                                    style="resize: #{note.noteType.name().equals('HISTORY') ? 'none' : 'vertical'}; width: 600px; height: #{note.noteType.name().equals('HISTORY') ? '15' : '30'}px"/>
+                        </h:column>
+                    </h:dataTable>
+                    <h:commandButton rendered="#{not printerCardController.view}"
+                                     value="+" action="#{printerCardController.addNote()}">
+                        <f:ajax execute="notes_table" render="notes_table"/>
+                    </h:commandButton>
+                </h:panelGrid>
+            </h:panelGroup>
+            <h:panelGroup/>
+            <h:panelGroup/>
+            <h:panelGroup/>
+            <h:commandButton style="color: #db0000"
+                             rendered="#{printerCardController.edit}"
+                             value="Удалить" action="#{printerCardController.remove()}"/>
         </h:panelGrid>
-        <h:commandButton value="Удалить" action="#{printerCardController.remove()}"/>
     </h:form>
 </h:body>
 </html>
