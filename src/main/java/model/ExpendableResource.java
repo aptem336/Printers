@@ -18,6 +18,7 @@ public class ExpendableResource {
     @Column(nullable = false)
     @Min(0)
     private Integer resource = 0;
+    private String number;
 
     public ExpendableResourcePK getExpendableResourcePK() {
         return expendableResourcePK;
@@ -49,5 +50,13 @@ public class ExpendableResource {
 
     public void setResource(Integer resource) {
         this.resource = resource;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
     }
 }

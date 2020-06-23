@@ -14,7 +14,6 @@ public class ExpendableMileage {
     @ManyToOne(optional = false)
     @MapsId("expendableName")
     private Expendable expendable;
-    private String number;
     @NotNull
     @Column(nullable = false)
     @Min(0)
@@ -42,14 +41,6 @@ public class ExpendableMileage {
 
     public void setExpendable(Expendable expendable) {
         this.expendable = expendable;
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
     }
 
     public Integer getMileage() {

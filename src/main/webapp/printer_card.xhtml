@@ -70,7 +70,7 @@
                         <h:outputText value="Номер детали"/>
                     </f:facet>
                     <h:outputText
-                            value="#{printerCardController.printer.getExpendableMileage(expendable_resource).number}"/>
+                            value="#{expendable_resource.number}"/>
                 </h:column>
                 <h:column>
                     <f:facet name="header">
@@ -80,14 +80,14 @@
                         <h:outputText
                                 style="#{printerCardController.printer.counter - printerCardController.printer.getExpendableMileage(expendable_resource).mileage - expendable_resource.resource > 0 ? 'color: #e34545' : ''}"
                                 rendered="#{printerCardController.printer.getExpendableMileage(expendable_resource).mileage != null}"
-                                value="#{printerCardController.printer.counter - printerCardController.printer.getExpendableMileage(expendable_resource).mileage}/#{expendable_resource.resource}"/>
+                                value="#{(printerCardController.printer.counter - printerCardController.printer.getExpendableMileage(expendable_resource).mileage)/1000}/#{expendable_resource.resource/1000}"/>
                     </h:panelGroup>
                 </h:column>
                 <h:column rendered="#{not printerCardController.view}">
                     <h:commandButton value="*"
                                      style="#{printerCardController.printer.counter - printerCardController.printer.getExpendableMileage(expendable_resource).mileage - expendable_resource.resource > 0 ? 'background: #e34545; color: white' : ''}"
                                      action="#{printerCardController.replaceExpendable(expendable_resource)}">
-                        <f:ajax execute="notes_table" render="number resource @this printer_card_form:notes_table"/>
+                        <f:ajax execute="notes_table" render="resource @this printer_card_form:notes_table"/>
                     </h:commandButton>
                 </h:column>
             </h:dataTable>
@@ -146,6 +146,7 @@
             <h:panelGroup/>
             <h:commandButton style="color: #db0000"
                              rendered="#{printerCardController.edit}"
+                             onclick="if (!confirm('Удалить?')) return false;"
                              value="Удалить" action="#{printerCardController.remove()}"/>
         </h:panelGrid>
     </h:form>

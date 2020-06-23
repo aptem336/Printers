@@ -6,6 +6,8 @@ import model.Note;
 import model.Printer;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -66,9 +68,14 @@ public class PrinterCardController implements Serializable {
 
     @Transactional
     public String save() {
-        printer.getExpendableMileages().forEach(em -> em.setPrinter(printer));
         if (mode == Mode.CREATE) {
-            em.persist(printer);
+            if (em.find(Printer.class, printer.getInventoryNumber()) != null) {
+                printer.setInventoryNumber(null);
+                FacesContext.getCurrentInstance().validationFailed();
+                return null;
+            } else {
+                em.persist(printer);
+            }
         } else {
             em.merge(printer);
         }

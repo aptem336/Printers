@@ -12,14 +12,15 @@
 <composite:implementation>
     <h:panelGroup id="expendables_checkbox"
                   layout="block"
-                  style="text-align: left; max-width: 600px">
+                  style="text-align: left; max-width: 750px">
         <ui:repeat var="expendable"
                    value="#{cc.attrs.expendables}">
-            <h:panelGroup style="white-space: nowrap">
+            <h:panelGroup style="white-space: nowrap; display: inline-block">
                 <h:selectBooleanCheckbox id="checkbox" value="#{expendable.replaceable}" disabled="#{cc.attrs.disabled}">
                     <f:ajax render="printers_form:printers_table"/>
                 </h:selectBooleanCheckbox>
                 <h:outputLabel for="checkbox" value="#{expendable.expendableName}"/>
+                <h:outputText rendered="#{expendable.number != null}" value=" - (#{expendable.number})"/>
             </h:panelGroup>
         </ui:repeat>
     </h:panelGroup>

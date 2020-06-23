@@ -11,9 +11,10 @@
     <title>Принтеры</title>
 </h:head>
 <h:body>
-    <h:form id="printers_form">
+    <h:form id="printers_form" onkeypress="if(event.keyCode === 13){event.preventDefault();return false;}">
         <h:panelGroup layout="block" style="text-align: right">
-            <h:commandButton value="Выйти" action="#{printerFilterController.logout()}"/>
+            <h:commandButton value="Выйти" onclick="if (!confirm('Выйти?')) return false;"
+                             action="#{printerFilterController.logout()}"/>
         </h:panelGroup>
         <h:panelGrid columns="4">
             <h:inputText id="inventoryNumber" value="#{printerFilterController.printer.inventoryNumber}"
@@ -62,7 +63,8 @@
                     <cc:expendables expendables="#{printer.replaceableExpendables}" disabled="#{true}"/>
                 </h:column>
             </h:dataTable>
-            <h:button rendered="#{printerFilterController.create}" value="+" outcome="printer_card?faces-redirect=true"/>
+            <h:button rendered="#{printerFilterController.create}" value="+"
+                      outcome="printer_card?faces-redirect=true"/>
         </h:panelGrid>
         <!--FIXME print only expendables_table-->
         <h:button value="Печать" onclick="window.print()"/>

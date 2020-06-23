@@ -81,7 +81,7 @@ public class Printer {
             if (printerModel != null) {
                 replaceableExpendable = printerModel.getExpendableResources().stream()
                         .filter(er -> getExpendableMileage(er) == null || er.getResource() < counter - getExpendableMileage(er).getMileage())
-                        .map(er -> new ReplaceableExpendable(er.getExpendable().getName(), true)).collect(Collectors.toList());
+                        .map(er -> new ReplaceableExpendable(er.getExpendable().getName(), true, er.getNumber())).collect(Collectors.toList());
             }
         }
         return replaceableExpendable;

@@ -32,7 +32,7 @@ public class PrinterFilterController implements Serializable {
         printer = new Printer();
         printer.setPrinterModel(new PrinterModel());
         printer.setReplaceableExpendable(queryController.getAllExpendables().stream().map(e ->
-                new ReplaceableExpendable(e.getName(), false)).collect(Collectors.toList()));
+                new ReplaceableExpendable(e.getName(), false, null)).collect(Collectors.toList()));
         printers = queryController.getAllPrinters();
         if (securityContext.isCallerInRole("ENGINEER")) {
             mode = Mode.CREATE;
@@ -48,11 +48,11 @@ public class PrinterFilterController implements Serializable {
     public List<Printer> getFilteredPrinters() {
         Stream<Printer> printerStream = printers.stream();
         if (printer.getInventoryNumber() != null) {
-            printerStream = printerStream.filter(p -> p.getInventoryNumber().contains(printer.getInventoryNumber()));
+            printerStream = printerStream.filter(p -> p.getInventoryNumber().toLowerCase().contains(printer.getInventoryNumber().toLowerCase()));
         }
-        printerStream = printerStream.filter(p -> p.getPrinterModel().getModel().contains(printer.getPrinterModel().getModel()));
+        printerStream = printerStream.filter(p -> p.getPrinterModel().getModel().toLowerCase().contains(printer.getPrinterModel().getModel().toLowerCase()));
         if (printer.getLocation() != null) {
-            printerStream = printerStream.filter(p -> p.getLocation().contains(printer.getLocation()));
+            printerStream = printerStream.filter(p -> p.getLocation().toLowerCase().contains(printer.getLocation().toLowerCase()));
         }
         printerStream = printerStream.filter(p -> p.getReplaceableExpendables().containsAll(
                 printer.getReplaceableExpendables().stream().filter(ReplaceableExpendable::getReplaceable).collect(Collectors.toList()))
