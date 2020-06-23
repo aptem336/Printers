@@ -6,7 +6,6 @@ import model.Note;
 import model.Printer;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -88,10 +87,6 @@ public class PrinterCardController implements Serializable {
         return "printer_filter?faces-redirect=true";
     }
 
-    public Note getNote() {
-        return note;
-    }
-
     public void addNote() {
         Note note = new Note();
         note.setNoteType(Note.NoteType.COMMENT);
@@ -104,23 +99,6 @@ public class PrinterCardController implements Serializable {
     public void removeNote(Note note) {
         note.setPrinter(null);
         printer.getNotes().remove(note);
-    }
-
-    public List<Note> getNotes() {
-        return printer.getNotes().stream().filter(n -> note.getNoteType() == null
-                || n.getNoteType() == note.getNoteType()).collect(Collectors.toList());
-    }
-
-    public void all() {
-        note.setNoteType(null);
-    }
-
-    public void comment() {
-        note.setNoteType(Note.NoteType.COMMENT);
-    }
-
-    public void history() {
-        note.setNoteType(Note.NoteType.HISTORY);
     }
 
     public void replaceExpendable(ExpendableResource expendableResource) {
@@ -141,6 +119,28 @@ public class PrinterCardController implements Serializable {
         note.setPrinter(printer);
         printer.getNotes().add(note);
     }
+
+    public Note getNote() {
+        return note;
+    }
+
+    public void all() {
+        note.setNoteType(null);
+    }
+
+    public void comment() {
+        note.setNoteType(Note.NoteType.COMMENT);
+    }
+
+    public void history() {
+        note.setNoteType(Note.NoteType.HISTORY);
+    }
+
+    public List<Note> getNotes() {
+        return printer.getNotes().stream().filter(n -> note.getNoteType() == null
+                || n.getNoteType() == note.getNoteType()).collect(Collectors.toList());
+    }
+
 
     public Mode getMode() {
         return mode;
