@@ -25,12 +25,6 @@
             <artifactId>hibernate-core</artifactId>
             <version>5.4.8.Final</version>
         </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.7.0-M1</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
     <build>
         <finalName>Printers</finalName>

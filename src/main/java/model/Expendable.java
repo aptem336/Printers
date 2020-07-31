@@ -13,9 +13,6 @@ public class Expendable {
     @Id
     private String name = "";
 
-    public Expendable() {
-    }
-
     public String getName() {
         return name;
     }
